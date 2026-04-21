@@ -1,89 +1,35 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <style>
-    body {
-      font-family: system-ui, -apple-system, sans-serif;
-      margin: 0;
-      padding: 12px;
-      background: transparent;
-      color: #e0e0e0;
-    }
-    .mentor-card {
-      background: #1e1e2e;
-      border-radius: 12px;
-      padding: 16px;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-      border-left: 4px solid #89b4fa;
-    }
-    .header {
-      font-size: 0.85em;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      color: #a6adc8;
-      margin-bottom: 8px;
-    }
-    .state {
-      font-size: 1.4em;
-      font-weight: 600;
-      color: #f38ba8;
-      margin-bottom: 12px;
-    }
-    .diagnosis {
-      font-style: italic;
-      margin-bottom: 12px;
-      color: #bac2de;
-    }
-    .nudge {
-      padding: 12px;
-      background: #313244;
-      border-radius: 8px;
-      margin-bottom: 12px;
-      font-size: 0.95em;
-    }
-    .action {
-      display: inline-block;
-      background: #89b4fa;
-      color: #11111b;
-      padding: 8px 16px;
-      border-radius: 6px;
-      font-weight: bold;
-      font-size: 0.9em;
-    }
-  </style>
-</head>
-<body>
-  <div id="app"></div>
+<script>
+  window.performAction = function(toolName, parametersJson) {
+    if (toolName === 'render_mentor_nudge') {
+      try {
+        const data = JSON.parse(parametersJson);
+        
+        // FAIL-SAFE: If the model sent an "analysis" key instead of the schema
+        const renderData = {
+          state: data.emotional_state || "System Update",
+          diagnosis: data.friction_diagnosis || data.analysis || "No diagnosis provided.",
+          nudge: data.mentor_nudge || "Focus on the breath.",
+          action: data.immediate_action || "Start the task now."
+        };
 
-  <script>
-    // The Gallery app automatically binds function execution for tool calls
-    window.performAction = function(toolName, parametersJson) {
-      if (toolName === 'render_mentor_nudge') {
-        try {
-          const data = JSON.parse(parametersJson);
-          renderCard(data);
-          // Return success to the model so it knows the UI was updated
-          return JSON.stringify({ status: "success", message: "Nudge rendered." });
-        } catch (e) {
-          return JSON.stringify({ status: "error", message: e.message });
-        }
+        renderCard(renderData);
+        return JSON.stringify({ status: "success" });
+      } catch (e) {
+        return JSON.stringify({ status: "error", message: e.message });
       }
-      return JSON.stringify({ status: "error", message: "Unknown tool." });
-    };
-
-    function renderCard(data) {
-      const app = document.getElementById('app');
-      app.innerHTML = `
-        <div class="mentor-card">
-          <div class="header">System Diagnosis</div>
-          <div class="state">${data.emotional_state}</div>
-          <div class="diagnosis">${data.friction_diagnosis}</div>
-          <div class="nudge">💡 ${data.mentor_nudge}</div>
-          <div class="action">⚡ ${data.immediate_action}</div>
-        </div>
-      `;
     }
-  </script>
-</body>
-</html>
+  };
+
+  function renderCard(data) {
+    const app = document.getElementById('app');
+    app.innerHTML = `
+      <div class="mentor-card">
+        <div class="header">System Diagnosis</div>
+        <div class="state">${data.state}</div>
+        <div class="diagnosis">${data.diagnosis}</div>
+        <div class="nudge">💡 ${data.nudge}</div>
+        <div class="action">⚡ ${data.action}</div>
+      </div>
+    `;
+  }
+</script>
