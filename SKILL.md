@@ -1,4 +1,4 @@
-
+---
 name: local-mentor
 description: An on-device psychological mentor that prevents overthinking and lowers activation energy using 60-second micro-steps.
 tools:
