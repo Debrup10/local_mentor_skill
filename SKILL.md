@@ -1,6 +1,8 @@
 ---
 name: local-mentor
 description: A high-fidelity psychological mentor that logs and resets cognitive states.
+scripts:
+  - scripts/index.html
 tools:
   - name: save_journal_log
     description: Saves a concise psychological diagnosis and action plan to the device's local memory.
