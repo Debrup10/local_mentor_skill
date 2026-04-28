@@ -1,0 +1,22 @@
+<!DOCTYPE html><html>
+<head>
+    <style>
+        body { font-family: sans-serif; background: #1e1e2e; color: #cdd6f4; padding: 15px; margin: 0; }
+        .log-entry { border-left: 3px solid #89b4fa; padding-left: 10px; margin-bottom: 12px; background: #313244; padding: 10px; border-radius: 4px; }
+        .type { font-size: 0.7em; text-transform: uppercase; color: #f38ba8; letter-spacing: 1px; }
+        .time { float: right; font-size: 0.7em; color: #6c7086; }
+    </style>
+</head>
+<body>
+    <div id="logs"></div>
+    <script>
+        const logs = JSON.parse(localStorage.getItem('mentor_logs') || '[]');
+        document.getElementById('logs').innerHTML = logs.map(l => `
+            <div class="log-entry">
+                <span class="time">${l.time}</span>
+                <div class="type">${l.type}</div>
+                <div class="content">${l.text}</div>
+            </div>
+        `).join('');
+    </script>
+</body></html>
