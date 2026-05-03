@@ -1,22 +1,22 @@
-window['ai_edge_gallery_get_result'] = async (data) => {
-    const input = JSON.parse(data);
-    const toolName = input.tool_name; // Note: Verify your framework's toolName key
+<!DOCTYPE html><html><body><script>
+    window['ai_edge_gallery_get_result'] = async (data) => {
+        try {
+            const input = JSON.parse(data);
+            const history = JSON.parse(localStorage.getItem('mentor_history') || '[]');
+            
+            // Archive with the new pillar data
+            history.unshift({
+                timestamp: new Date().toLocaleString(),
+                ...input
+            });
+            localStorage.setItem('mentor_history', JSON.stringify(history.slice(0, 20)));
 
-    // 1. Retrieval Logic
-    if (toolName === 'get_journal_history') {
-        const history = JSON.parse(localStorage.getItem('mentor_history') || '[]');
-        return JSON.stringify({ result: history.slice(0, 10) });
-    }
-
-    // 2. Archive Logic
-    if (toolName === 'process_mentor_session') {
-        const history = JSON.parse(localStorage.getItem('mentor_history') || '[]');
-        history.unshift({ timestamp: new Date().toLocaleString(), ...input });
-        localStorage.setItem('mentor_history', JSON.stringify(history.slice(0, 15)));
-
-        return JSON.stringify({
-            result: "Session archived.",
-            webview: { url: "../assets/webview.html", aspectRatio: 1.2 }
-        });
-    }
-};
+            return JSON.stringify({
+                result: "Mindset updated.",
+                webview: { url: "../assets/webview.html", aspectRatio: 1.1 }
+            });
+        } catch (e) {
+            return JSON.stringify({ error: e.message });
+        }
+    };
+</script></body></html>
