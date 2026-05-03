@@ -1,21 +1,32 @@
 <!DOCTYPE html><html>
 <head>
     <style>
-        body { font-family: sans-serif; background: #1e1e2e; color: #cdd6f4; padding: 15px; margin: 0; }
-        .log-entry { border-left: 3px solid #89b4fa; padding-left: 10px; margin-bottom: 12px; background: #313244; padding: 10px; border-radius: 4px; }
-        .type { font-size: 0.7em; text-transform: uppercase; color: #f38ba8; letter-spacing: 1px; }
-        .time { float: right; font-size: 0.7em; color: #6c7086; }
+        body { font-family: sans-serif; background: #1a1b26; color: #a9b1d6; padding: 15px; margin: 0; }
+        .card { background: #24283b; border-radius: 10px; padding: 16px; border: 1px solid #414868; margin-bottom: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.2); }
+        .label { font-size: 0.75em; color: #7aa2f7; text-transform: uppercase; font-weight: bold; margin-bottom: 4px; }
+        .content { margin-bottom: 12px; font-size: 0.95em; line-height: 1.5; color: #c0caf5; }
+        .spark-box { background: #7aa2f7; color: #1a1b26; padding: 8px; border-radius: 6px; font-weight: bold; text-align: center; font-size: 0.85em; }
+        .time { float: right; font-size: 0.7em; color: #565f89; }
+        h3 { font-size: 1em; color: #bb9af7; margin-top: 0; border-bottom: 1px solid #414868; padding-bottom: 5px; }
     </style>
 </head>
 <body>
+    <h3>📓 Mentor Archive</h3>
     <div id="logs"></div>
     <script>
-        const logs = JSON.parse(localStorage.getItem('mentor_logs') || '[]');
-        document.getElementById('logs').innerHTML = logs.map(l => `
-            <div class="log-entry">
-                <span class="time">${l.time}</span>
-                <div class="type">${l.type}</div>
-                <div class="content">${l.text}</div>
+        // Make sure the key 'mentor_history' matches what you used in scripts/index.html
+        const history = JSON.parse(localStorage.getItem('mentor_history') || '[]');
+        
+        document.getElementById('logs').innerHTML = history.map(l => `
+            <div class="card">
+                <span class="time">${l.timestamp || l.time}</span>
+                <div class="label">🧠 Mirror</div>
+                <div class="content">${l.diagnosis}</div>
+                
+                <div class="label">☸️ Compass</div>
+                <div class="content">${l.philosophy}</div>
+                
+                <div class="spark-box">⚡ SPARK: ${l.action}</div>
             </div>
         `).join('');
     </script>
