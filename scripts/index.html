@@ -2,21 +2,42 @@
     window['ai_edge_gallery_get_result'] = async (data) => {
         try {
             const input = JSON.parse(data);
+            
+            // 1. DISTINGUISH THE TOOL
+            // If the input has a 'diagnosis', it's a 'process_mentor_session' call.
+            // If it's empty or missing 'diagnosis', it's a 'get_journal_history' call.
+            const isWriteOperation = input.hasOwnProperty('diagnosis');
+
+            // 2. ROUTE: RETRIEVAL (Phase 1)
+            if (!isWriteOperation) {
+                const history = JSON.parse(localStorage.getItem('mentor_history') || '[]');
+                return JSON.stringify({
+                    result: history.slice(0, 10) // Send the last 10 entries back to Gemma
+                });
+            }
+
+            // 3. ROUTE: ARCHIVE (Phase 4)
             const history = JSON.parse(localStorage.getItem('mentor_history') || '[]');
             
-            // Archive with the new pillar data
+            // Archive the full analysis
             history.unshift({
                 timestamp: new Date().toLocaleString(),
                 ...input
             });
+            
+            // Maintain a rolling window of 20 logs for data integrity
             localStorage.setItem('mentor_history', JSON.stringify(history.slice(0, 20)));
 
             return JSON.stringify({
-                result: "Mindset updated.",
-                webview: { url: "../assets/webview.html", aspectRatio: 1.1 }
+                result: "Session archived. Mindset dashboard updated.",
+                webview: { 
+                    url: "../assets/webview.html", 
+                    aspectRatio: 1.1 
+                }
             });
+
         } catch (e) {
-            return JSON.stringify({ error: e.message });
+            return JSON.stringify({ error: `Routing Error: ${e.message}` });
         }
     };
 </script></body></html>
