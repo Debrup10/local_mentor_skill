@@ -1,27 +1,22 @@
-<!DOCTYPE html><html><body><script>
-    window['ai_edge_gallery_get_result'] = async (data) => {
-        try {
-            const jsonData = JSON.parse(data);
-            
-            // 1. Save to LocalStorage
-            const logs = JSON.parse(localStorage.getItem('mentor_logs') || '[]');
-            logs.unshift({
-                time: new Date().toLocaleTimeString(),
-                text: jsonData.log_text,
-                type: jsonData.advice_type
-            });
-            localStorage.setItem('mentor_logs', JSON.stringify(logs.slice(0, 10)));
+window['ai_edge_gallery_get_result'] = async (data) => {
+    const input = JSON.parse(data);
+    const toolName = input.tool_name; // Note: Verify your framework's toolName key
 
-            // 2. Return the Webview instructions
-            return JSON.stringify({
-                result: "Journal updated and opened.",
-                webview: {
-                    url: "../assets/webview.html", // Relative to scripts/
-                    aspectRatio: 1.2
-                }
-            });
-        } catch (e) {
-            return JSON.stringify({ error: `Logic Failed: ${e.message}` });
-        }
-    };
-</script></body></html>
+    // 1. Retrieval Logic
+    if (toolName === 'get_journal_history') {
+        const history = JSON.parse(localStorage.getItem('mentor_history') || '[]');
+        return JSON.stringify({ result: history.slice(0, 10) });
+    }
+
+    // 2. Archive Logic
+    if (toolName === 'process_mentor_session') {
+        const history = JSON.parse(localStorage.getItem('mentor_history') || '[]');
+        history.unshift({ timestamp: new Date().toLocaleString(), ...input });
+        localStorage.setItem('mentor_history', JSON.stringify(history.slice(0, 15)));
+
+        return JSON.stringify({
+            result: "Session archived.",
+            webview: { url: "../assets/webview.html", aspectRatio: 1.2 }
+        });
+    }
+};
